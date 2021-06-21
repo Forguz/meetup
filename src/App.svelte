@@ -1,8 +1,17 @@
 <script>
   import Header from './UI/Header.svelte';
   import MeetupGrid from './Meetups/MeetupGrid.svelte';
+  import TextInput from './UI/TextInput.svelte';
+  import Button from './UI/Button.svelte';
 
-  const meetups = [
+  let title = '';
+  let subtitle = '';
+  let address = '';
+  let email = '';
+  let description = '';
+  let imageUrl = '';
+
+  let meetups = [
     {
       id: 'm1',
       title: 'Coding Bootcamp',
@@ -22,15 +31,66 @@
       contactEmail: 'swim@test.com'
     }
   ];
+
+  function addMeetup() {
+    const newMeetup = {
+      id: Math.random().toString(),
+      title,
+      subtitle,
+      description,
+      imageUrl,
+      address,
+      contactEmail: email
+    }
+
+    meetups = [newMeetup, ...meetups]
+  }
 </script>
 
 <Header />
 <main>
+  <form on:submit|preventDefault={addMeetup}>
+    <TextInput 
+      id="title"
+      label="Title"
+      value={title}
+      on:input={e => (title = e.target.value)} />
+    <TextInput
+      id="subtitle"
+      label="Subtitle"
+      value={subtitle}
+      on:input={e => (subtitle = e.target.value)} />
+    <TextInput 
+      id="address" 
+      label="Address"
+      value={address}
+      on:input={e => (address = e.target.value)} />
+    <TextInput 
+      id="email" 
+      label="E-Mail"
+      value={email}
+      on:input={e => (email = e.target.value)} />
+    <TextInput
+      controlType="textArea"
+      rows=3
+      id="description" 
+      label="Description"
+      type="email"
+      value={description}
+      on:input={e => (description = e.target.value)} />
+    <Button type="submit" caption="Save" />
+  </form>
   <MeetupGrid {meetups} />
 </main>
 
 <style>
   main {
     margin-top: 5rem;
+  }
+
+  form {
+    width: 30rem;
+    max-width: 90%;
+    margin: auto;
   }
 </style>
