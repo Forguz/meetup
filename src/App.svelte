@@ -3,13 +3,7 @@
   import MeetupGrid from './Meetups/MeetupGrid.svelte';
   import TextInput from './UI/TextInput.svelte';
   import Button from './UI/Button.svelte';
-
-  let title = '';
-  let subtitle = '';
-  let address = '';
-  let email = '';
-  let description = '';
-  let imageUrl = '';
+  import EditMeetup from './Meetups/EditMeetup.svelte';
 
   let meetups = [
     {
@@ -34,19 +28,7 @@
     }
   ];
 
-  function addMeetup() {
-    const newMeetup = {
-      id: Math.random().toString(),
-      title,
-      subtitle,
-      description,
-      imageUrl,
-      address,
-      contactEmail: email
-    }
-
-    meetups = [newMeetup, ...meetups]
-  }
+  let editMode = null;
 
   function toggleFavorite(event) {
     const id = event.detail;
@@ -59,41 +41,38 @@
 
     meetups = updatedMeetups;
   }
+
+  function addMeetup(event) {
+    const {
+      title,
+      subtitle,
+      description,
+      imageUrl,
+      address,
+      email
+    } = event.detail;
+    const newMeetup = {
+      id: Math.random().toString(),
+      title,
+      subtitle,
+      description,
+      imageUrl,
+      address,
+      contactEmail: email
+    }
+
+    meetups = [newMeetup, ...meetups]
+  }
 </script>
 
 <Header />
 <main>
-  <form on:submit|preventDefault={addMeetup}>
-    <TextInput 
-      id="title"
-      label="Title"
-      value={title}
-      on:input={e => (title = e.target.value)} />
-    <TextInput
-      id="subtitle"
-      label="Subtitle"
-      value={subtitle}
-      on:input={e => (subtitle = e.target.value)} />
-    <TextInput 
-      id="address" 
-      label="Address"
-      value={address}
-      on:input={e => (address = e.target.value)} />
-    <TextInput 
-      id="email" 
-      label="E-Mail"
-      value={email}
-      on:input={e => (email = e.target.value)} />
-    <TextInput
-      controlType="textArea"
-      rows=3
-      id="description" 
-      label="Description"
-      type="email"
-      value={description}
-      on:input={e => (description = e.target.value)} />
-    <Button type="submit" caption="Save" />
-  </form>
+  <div class="meetup-controls">
+    <Button caption="New Meetup" on:click={() => editMode = 'add'}/>
+  </div>
+  {#if editMode === 'add'}
+    <EditMeetup on:save={addMeetup} />
+  {/if}
   <MeetupGrid {meetups} on:togglefavorite={toggleFavorite}/>
 </main>
 
@@ -102,9 +81,7 @@
     margin-top: 5rem;
   }
 
-  form {
-    width: 30rem;
-    max-width: 90%;
-    margin: auto;
+  .meetup-controls {
+    margin: 1rem;
   }
 </style>
